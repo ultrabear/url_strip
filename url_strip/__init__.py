@@ -13,8 +13,9 @@ __all__ = [
     "StripFuncResult",
     "register",
     "strip_url",
+    "special_cases",
     ]
 
 from ._types import Result, Ok, Err, HttpUrl, UrlError, StripFunc, StripFuncResult
-from ._special_cases import register
+from ._special_cases import register, special_cases
 from ._strip import strip_url

@@ -1,13 +1,20 @@
 """
 Special cases init handler and predefined domains
 """
-from typing import Dict, TypeVar, Callable
+from typing import Dict, TypeVar, Callable, Iterator
 
 from ._types import StripFunc, StripFuncResult, Ok, Err, HttpUrl, UrlError
 
 _special_cases: Dict[str, StripFunc] = {}
 
 F = TypeVar("F", bound=StripFunc)
+
+
+def special_cases() -> Iterator[str]:
+    """
+    Returns an iterator of all special case domain names
+    """
+    return iter(_special_cases)
 
 
 def register(*, domain: str) -> Callable[[F], F]:
