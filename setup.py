@@ -24,6 +24,7 @@ setup(
     install_requires=get_requires(),
     classifiers=[
         *support_pyvers(3, range(8, 12)),
+        "Programming Language :: Python :: 3 :: Only",
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Natural Language :: English",
