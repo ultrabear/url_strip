@@ -4,7 +4,7 @@ Strips a url
 from typing import Final
 import copy
 
-from ._special_cases import _special_cases
+from ._special_cases import special_cases_map
 from ._types import HttpUrl, Result, UrlError, Err, Ok
 
 
@@ -33,7 +33,7 @@ def strip_url(url_str: str, /) -> Result[HttpUrl, UrlError]:
     if url is None:
         return Err(UrlError("String passed could not parse into url"))
 
-    if url.domain in _special_cases:
-        return _special_cases[url.domain](url)
+    if url.domain in special_cases_map:
+        return special_cases_map[url.domain](url)
 
     return strip_last_query(url)

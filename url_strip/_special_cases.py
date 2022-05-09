@@ -5,7 +5,7 @@ from typing import Dict, TypeVar, Callable, Iterator, List, Union
 
 from ._types import StripFunc, StripFuncResult, Ok, Err, HttpUrl, UrlError
 
-_special_cases: Dict[str, StripFunc] = {}
+special_cases_map: Dict[str, StripFunc] = {}
 
 F = TypeVar("F", bound=StripFunc)
 
@@ -21,7 +21,7 @@ def special_cases() -> Iterator[str]:
     """
     Returns an iterator of all special case domain names
     """
-    return iter(_special_cases)
+    return iter(special_cases_map)
 
 
 def register(*, domain: Union[str, List[str]]) -> Callable[[F], F]:
@@ -30,12 +30,12 @@ def register(*, domain: Union[str, List[str]]) -> Callable[[F], F]:
     """
     def deco(f: F, /) -> F:
         if isinstance(domain, str):
-            _special_cases[domain] = f
+            special_cases_map[domain] = f
         else:
             if len(domain) == 0:
                 raise NoDomainError(f"Function {f} registered with no domains")
             for i in domain:
-                _special_cases[i] = f
+                special_cases_map[i] = f
         return f
 
     return deco
