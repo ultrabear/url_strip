@@ -97,6 +97,7 @@ def main() -> int:
 
     tests: Dict[str, Union[str, Shell]] = {
         "pyflakes": "pyflakes .",
+        # These flags are also set in pyproject.toml, but exist here for portability
         "mypy": "mypy . --ignore-missing-imports --strict --warn-unreachable --python-version 3.8",
         "yapf": "yapf -drp .",
         "pylint": "pylint ./url_strip -j2 --py-version=3.8",
