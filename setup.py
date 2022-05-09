@@ -22,6 +22,10 @@ setup(
     author_email="bearodark@gmail.com",
     packages=find_packages(),
     install_requires=get_requires(),
+    exras_require={
+        "dev": ["mypy", "pylint", "yapf", "pyflakes", "pyright"],
+        },
+    python_requires=">=3.8.0",
     classifiers=[
         *support_pyvers(3, range(8, 11)),
         "Programming Language :: Python :: 3 :: Only",
