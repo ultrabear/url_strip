@@ -103,7 +103,7 @@ class ClassOk:
 
             raise UnwrapError(
                 f"{loc}Result type was Err variant, expected Ok variant\n"
-                "Err: {type(result[1]).__name__}='{result[1]}'"
+                f"Err: {type(result[1]).__name__}='{result[1]}'"
                 )
 
         return result[1]
@@ -154,7 +154,7 @@ class ClassErr:
 
             raise UnwrapError(
                 f"{loc}Result type was Ok variant, expected Err variant\n"
-                "Ok: {type(result[1]).__name__}='{result[1]}'"
+                f"Ok: {type(result[1]).__name__}='{result[1]}'"
                 )
 
         return result[1]
