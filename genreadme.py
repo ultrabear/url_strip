@@ -114,8 +114,8 @@ def unify(cases: Iterator[str], output: StringWriter) -> None:
     output.write("| Site | Domains |\n")
     output.write("| --- | --- |\n")
 
-    for k, v in tree.items():
-        output.write(f"| {k} | `{'`, `'.join(v)}` | \n")
+    for k in sorted(tree):
+        output.write(f"| {k} | `{'`, `'.join(tree[k])}` | \n")
 
 
 TITLE = "Url Strip"
