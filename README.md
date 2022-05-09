@@ -48,7 +48,7 @@ else:
 from url_strip import UrlError, Ok, Err, StripFuncResult, HttpUrl, register
 
 @register(domain="foo.com")
-def foo_com_strip(
+def foo_com_strip( # pyright: ignore[reportUnusedFunction]
     url: HttpUrl
     ) -> StripFuncResult:  # Result[HttpUrl, UrlError] -> ('ok', HttpUrl) | ('err', UrlError)
 
