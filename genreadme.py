@@ -3,7 +3,7 @@ README generation tool that allows examples to be typechecked and special cases 
 """
 
 import inspect
-from typing import Callable, List, Dict, Protocol
+from typing import Callable, List, Dict, Protocol, Iterator
 
 
 class examples:
@@ -65,11 +65,13 @@ def wrap(f: Callable[..., None], /) -> str:
     source = "\n".join([i[8:].rstrip("\n") for i in inspect.getsourcelines(f)[0][2:]])
     return f"```py\n{source}\n```\n"
 
+
 class StringWriter(Protocol):
     def write(self, data: str, /) -> int:
         ...
 
-def unify(cases: List[str], output: StringWriter) -> None:
+
+def unify(cases: Iterator[str], output: StringWriter) -> None:
 
     tree: Dict[str, List[str]] = {}
 
@@ -99,7 +101,6 @@ def unify(cases: List[str], output: StringWriter) -> None:
 
     for k, v in tree.items():
         output.write(f"| {k} | `{'`, `'.join(v)}` | \n")
-
 
 
 TITLE = "Url Strip"
@@ -135,8 +136,6 @@ def main() -> None:
 
         fp.write("## Popular websites supported are listed below:\n")
         unify(special_cases(), fp)
-
-
 
 
 if __name__ == "__main__":
