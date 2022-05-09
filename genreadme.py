@@ -7,6 +7,7 @@ from typing import Callable, List, Dict, Protocol, Iterator
 
 # pylint: disable=import-outside-toplevel
 
+
 class Examples:
     """
     Class containing examples
