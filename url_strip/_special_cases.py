@@ -3,7 +3,8 @@ Special cases init handler and predefined domains
 """
 from typing import Dict, TypeVar, Callable, Iterator, List, Union
 
-from ._types import StripFunc, StripFuncResult, Ok, Err, HttpUrl, UrlError
+from ._result import Ok, Err
+from ._types import StripFunc, StripFuncResult, HttpUrl, UrlError
 
 special_cases_map: Dict[str, StripFunc] = {}
 

@@ -5,7 +5,8 @@ from typing import Final
 import copy
 
 from ._special_cases import special_cases_map
-from ._types import HttpUrl, Result, UrlError, Err, Ok
+from ._result import Result, Err, Ok
+from ._types import HttpUrl, UrlError
 
 
 def strip_last_query(url: HttpUrl, /) -> Result[HttpUrl, UrlError]:
