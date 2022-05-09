@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[tool.pyright]
+pythonVersion = "3.8"
+pythonPlatform = "Linux"
+strict = ["*"]
+
+[tool.mypy]
+ignore_missing_imports=true
+strict=true 
+warn_unreachable=true 
+python_version = "3.8"
+
+[tool.pylint.master]
+py-version = "3.8"
