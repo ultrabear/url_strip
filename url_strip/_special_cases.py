@@ -89,3 +89,12 @@ def ebay_strip(v: HttpUrl, /) -> StripFuncResult:
     """
 
     return Ok(_no_query(v))
+
+
+@register(domain="twitter.com")
+def twitter_strip(v: HttpUrl, /) -> StripFuncResult:
+    """
+    Strip function for twitter domains
+    """
+
+    return Ok(_no_query(v))
