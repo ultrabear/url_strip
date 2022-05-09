@@ -9,6 +9,7 @@ __all__ = [
     "Err",
     "HttpUrl",
     "UrlError",
+    "UrlParseError",
     "StripFunc",
     "StripFuncResult",
     "register",
@@ -16,6 +17,6 @@ __all__ = [
     "special_cases",
     ]
 
-from ._types import Result, Ok, Err, HttpUrl, UrlError, StripFunc, StripFuncResult
+from ._types import Result, Ok, Err, HttpUrl, UrlError, UrlParseError, StripFunc, StripFuncResult
 from ._special_cases import register, special_cases
 from ._strip import strip_url
