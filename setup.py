@@ -23,7 +23,7 @@ setup(
     packages=find_packages(),
     install_requires=get_requires(),
     classifiers=[
-        *support_pyvers(3, range(8, 12)),
+        *support_pyvers(3, range(8, 11)),
         "Programming Language :: Python :: 3 :: Only",
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
