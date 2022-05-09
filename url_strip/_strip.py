@@ -28,10 +28,12 @@ def strip_url(url_str: str, /) -> Result[HttpUrl, UrlError]:
     if not url_str.startswith("http"):
         return Err(UrlError("Url does not start with http(s)"))
 
-    url: Final = HttpUrl.from_str(url_str)
+    parsed: Final = HttpUrl.from_str(url_str)
 
-    if url is None:
-        return Err(UrlError("String passed could not parse into url"))
+    if (err := Err.get(parsed)) is not None:
+        return Err(err)
+
+    url = Ok.unwrap(parsed)
 
     if url.domain in special_cases_map:
         return special_cases_map[url.domain](url)
