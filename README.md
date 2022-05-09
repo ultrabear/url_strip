@@ -63,5 +63,6 @@ Some popular websites have pre-`register`'d rules, while any non registered webs
 The pre registered domains are as follows:
 | Site | Domains |
 | --- | --- |
-| youtube | `www.youtube.com`, `youtube.com` | 
-| amazon | `www.amazon.co.uk`, `www.amazon.com` | 
+| youtube | `youtube.com`, `www.youtube.com` | 
+| amazon | `www.amazon.com`, `www.amazon.co.uk` | 
+| ebay | `ebay.com`, `www.ebay.com`, `www.ebay.co.uk` | 
