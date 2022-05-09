@@ -54,3 +54,8 @@ def foo_com_strip(
     else:
         return Ok(url)  # dont change url at all, its perfect as is
 ```
+## Popular websites supported are listed below:
+| Site | Domains |
+| --- | --- |
+| youtube | `www.youtube.com`, `youtube.com` | 
+| amazon | `www.amazon.co.uk`, `www.amazon.com` | 

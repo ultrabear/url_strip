@@ -3,7 +3,7 @@ README generation tool that allows examples to be typechecked and special cases 
 """
 
 import inspect
-from typing import Callable
+from typing import Callable, List, Dict, Protocol
 
 
 class examples:
@@ -65,6 +65,42 @@ def wrap(f: Callable[..., None], /) -> str:
     source = "\n".join([i[8:].rstrip("\n") for i in inspect.getsourcelines(f)[0][2:]])
     return f"```py\n{source}\n```\n"
 
+class StringWriter(Protocol):
+    def write(self, data: str, /) -> int:
+        ...
+
+def unify(cases: List[str], output: StringWriter) -> None:
+
+    tree: Dict[str, List[str]] = {}
+
+    def add_item(resolved: str, domain: str) -> None:
+        try:
+            tree[resolved].append(domain)
+        except KeyError:
+            tree[resolved] = [domain]
+
+    for i in cases:
+        resolve = i.split(".")
+        # Assume its a .com/.net/etc endpoint
+        if len(resolve) == 2:
+            add_item(resolve[0], i)
+
+        # take first item if its not www, or take second item
+        elif len(resolve) >= 3:
+            if resolve[0] == "www":
+                add_item(resolve[1], i)
+            else:
+                add_item(resolve[0], i)
+        else:
+            add_item(i, i)
+
+    output.write("| Site | Domains |\n")
+    output.write("| --- | --- |\n")
+
+    for k, v in tree.items():
+        output.write(f"| {k} | `{'`, `'.join(v)}` | \n")
+
+
 
 TITLE = "Url Strip"
 DESCRIPTION = "A library for stripping urls of tracking and bloat"
@@ -94,6 +130,13 @@ def main() -> None:
 
         fp.write("### Writing extra domain rules\n")
         fp.write(wrap(examples.domain_rules_example))
+
+        from url_strip import special_cases
+
+        fp.write("## Popular websites supported are listed below:\n")
+        unify(special_cases(), fp)
+
+
 
 
 if __name__ == "__main__":
