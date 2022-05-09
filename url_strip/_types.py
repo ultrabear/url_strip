@@ -3,6 +3,7 @@ Base types for the url_strip library
 """
 
 from dataclasses import dataclass
+import io
 import inspect
 from typing import Callable, Union, Optional, TypeVar, Literal, Tuple, List, Type, Final
 
@@ -16,7 +17,8 @@ URL_CHARS: Final = r"([a-zA-z0-9\-\.\_\-]|%[0-9a-fA-F]{2})"
 
 DOMAIN_CAPTURE: Final = f"(?P<domain>{URL_CHARS}+)"
 
-PATH_CAPTURE: Final = f"(?P<path>(/{URL_CHARS}*)+)"
+# Colons are allowed in the path
+PATH_CAPTURE: Final = f"(?P<path>(/({URL_CHARS}|\\:)*)+)"
 
 QUERY_KV: Final = f"{URL_CHARS}+={URL_CHARS}+"
 QUERY_CAPTURE: Final = f"(\\?(?P<query>{QUERY_KV}(&{QUERY_KV})*))"
@@ -36,6 +38,13 @@ class UrlError(Exception):
     __slots__ = ()
 
 
+class UrlParseError(UrlError):
+    """
+    An error relating to a url parse
+    """
+    __slots__ = ()
+
+
 T = TypeVar("T")
 E = TypeVar("E")
 
@@ -49,7 +58,7 @@ class UnwrapError(Exception):
     __slots__ = ()
 
 
-class _Ok:
+class ClassOk:
     """
     Constructor and inspector class for getting the Ok variant of a Result type
     """
@@ -92,12 +101,12 @@ class _Ok:
             else:
                 loc = ""
 
-            raise UnwrapError(f"{loc}Result type was Err variant, expected Ok variant")
+            raise UnwrapError(f"{loc}Result type was Err variant ({type(result[1]).__name__}='{result[1]}'), expected Ok variant")
 
         return result[1]
 
 
-class _Err:
+class ClassErr:
     """
     Constructor and inspector class for getting the Err variant of a Result type
     """
@@ -140,13 +149,13 @@ class _Err:
             else:
                 loc = ""
 
-            raise UnwrapError(f"{loc}Result type was Ok variant, expected Err variant")
+            raise UnwrapError(f"{loc}Result type was Ok variant ({type(result[1]).__name__}='{result[1]}'), expected Err variant")
 
         return result[1]
 
 
-Ok = _Ok()
-Err = _Err()
+Ok: ClassOk = ClassOk()
+Err: ClassErr = ClassErr()
 
 
 @dataclass
@@ -174,6 +183,48 @@ class HttpUrl:
 
         return query
 
+    @staticmethod
+    def _expand_format_chars(s: str, /) -> Result[str, UrlParseError]:
+        """
+        Expands url format chars in a string
+        """
+
+        output = io.BytesIO()
+        skip = 0
+
+        for idx, char in enumerate(s):
+            if skip != 0:
+                skip -= 1
+            elif char == "%":
+                skip = 2
+                val = s[idx + 1:idx + 3]
+                if len(val) != 2:
+                    return Err(
+                        UrlParseError(
+                            "Could not expand url element, not enough chars after % symbol"
+                            )
+                        )
+
+                try:
+                    data = int(val, 16)
+                except ValueError:
+                    print(val)
+                    return Err(
+                        UrlParseError(
+                            "Could not expand url element, chars after % symbol are not hex encoded"
+                            )
+                        )
+
+                output.write(bytes([data]))
+
+            else:
+                output.write(char.encode("utf8"))
+
+        try:
+            return Ok(output.getvalue().decode("utf8"))
+        except UnicodeDecodeError as err:
+            return Err(UrlParseError(err))
+
     def into_str(self, *, protocol: str = "https") -> str:
         """
         Returns a string representation of the HttpUrl
@@ -183,8 +234,25 @@ class HttpUrl:
 
         return f"{protocol}://{self.domain}{self.path}{query_str}{fragment_str}"
 
+    def path_decoded(self) -> Result[List[str], UrlError]:
+        """
+        Expands % format characters and returns path as a list
+        """
+        splitpath = self.path.split("/")
+
+        out: List[str] = []
+
+        for i in map(self._expand_format_chars, splitpath):
+
+            if (val := Ok.get(i)) is not None:
+                out.append(val)
+            else:
+                return Err(Err.unwrap(i))
+
+        return Ok(out)
+
     @classmethod
-    def from_str(cls: Type["HttpUrl"], url: str, /) -> Optional["HttpUrl"]:
+    def from_str(cls: Type["HttpUrl"], url: str, /) -> Result["HttpUrl", UrlParseError]:
         """
         Parses an HttpUrl from a string
         """
@@ -193,14 +261,14 @@ class HttpUrl:
         url = url.rstrip("/")
 
         if (capture := URL_REGEX.match(url)) is None:
-            return None
+            return Err(UrlParseError("Regex could not find url match"))
 
         # Require entire field to be url
         if capture.span() != (0, len(url)):
-            return None
+            return Err(UrlParseError("Regex capture does not span entire string passed"))
 
         if (domain := capture.group("domain")) is None:
-            return None
+            return Err(UrlParseError("Could not capture domain group"))
 
         if (path := capture.group("path")) is None:
             path = ""
@@ -209,7 +277,7 @@ class HttpUrl:
 
         fragment = capture.group("fragment")
 
-        return cls(domain, path, query, fragment)
+        return Ok(cls(domain, path, query, fragment))
 
 
 StripFuncResult = Result[HttpUrl, UrlError]
