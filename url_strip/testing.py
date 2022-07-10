@@ -21,7 +21,8 @@ def test(c: Func, /) -> Func:
 
 def run_tests() -> int:
     """
-    Runs all tests in the list, printing any exceptions, with the return int indicating how many tests failed.
+    Runs all tests in the list, printing any exceptions, with the return int
+     indicating how many tests failed.
     0 may be treated as no tests failing, or success.
     """
 

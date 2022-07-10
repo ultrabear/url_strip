@@ -35,11 +35,7 @@ class Examples:
             url = Ok.unwrap(v)
             # strip_url returns a Result[HttpUrl, UrlError], and HttpUrl provides a into_str method
             #  to get what most people expect as a final output
-            # NOTE: A bug in mypy causes the is_instance TypeGuard to change the type
-            #  from ('ok', HttpUrl) to ('ok', T`-1)
-            # We ignore the error for now, see: https://github.com/python/mypy/issues/12753
-            #  (current status: patched on master, awaiting next release)
-            value = url.into_str()  # type: ignore[attr-defined]
+            value = url.into_str()
 
             print(value)  # -> https://youtu.be/dQw4w9WgXcQ
         else:

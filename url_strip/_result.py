@@ -11,10 +11,11 @@ __all__ = [
 
 import inspect
 
-from typing import TypeVar, Union, Tuple, Literal, Optional
+from typing import TypeVar, Union, Tuple, Literal, Optional, Callable
 from typing_extensions import TypeGuard
 
 T = TypeVar("T")
+U = TypeVar("U")
 E = TypeVar("E")
 
 Result = Union[Tuple[Literal["ok"], T], Tuple[Literal["err"], E]]
@@ -76,6 +77,18 @@ class ClassOk:
                 )
 
         return result[1]
+
+    @staticmethod
+    def map(result: Result[T, E], call: Callable[[T], U]) -> Result[U, E]:
+        """
+        Maps Ok value of result with function, or returns Err variant
+        """
+        if Ok.is_instance(result):
+            return Ok(call(result[1]))
+        if Err.is_instance(result):
+            return result
+
+        raise RuntimeError("Unreachable!")
 
 
 class ClassErr:

@@ -1,12 +1,12 @@
 """
 Strips a url
 """
-from typing import Final
 import copy
 
 from ._special_cases import special_cases_map
 from ._result import Result, Err, Ok
 from ._types import HttpUrl, UrlError
+from .testing import test
 
 
 def strip_last_query(url: HttpUrl, /) -> Result[HttpUrl, UrlError]:
@@ -29,7 +29,7 @@ def strip_url(url_str: str, /) -> Result[HttpUrl, UrlError]:
     if not url_str.startswith("http"):
         return Err(UrlError("Url does not start with http(s)"))
 
-    parsed: Final = HttpUrl.from_str(url_str)
+    parsed: Result[HttpUrl, UrlError] = HttpUrl.from_str(url_str)
 
     if (err := Err.get(parsed)) is not None:
         return Err(err)
@@ -40,3 +40,12 @@ def strip_url(url_str: str, /) -> Result[HttpUrl, UrlError]:
         return special_cases_map[url.domain](url)
 
     return strip_last_query(url)
+
+
+@test
+def test_error_url() -> None:
+    """
+    Tests url parsing erroring correctly
+    """
+
+    assert Err.is_instance(strip_url("s\\gfadhbgjdkshfgb"))

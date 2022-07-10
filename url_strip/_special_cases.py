@@ -5,6 +5,7 @@ from typing import Dict, TypeVar, Callable, Iterator, List, Union
 
 from ._result import Ok, Err
 from ._types import StripFunc, StripFuncResult, HttpUrl, UrlError
+from .testing import test
 
 special_cases_map: Dict[str, StripFunc] = {}
 
@@ -46,6 +47,13 @@ def _no_query(v: HttpUrl, /) -> HttpUrl:
     return HttpUrl(v.domain, v.path, [], v.fragment)
 
 
+def _takes_str(c: Callable[[HttpUrl], StripFuncResult], /) -> Callable[[str], StripFuncResult]:
+    def takes_str(s: str, /) -> StripFuncResult:
+        return c(Ok.unwrap(HttpUrl.from_str(s)))
+
+    return takes_str
+
+
 @register(domain=["youtube.com", "www.youtube.com"])
 def youtube_strip(v: HttpUrl, /) -> StripFuncResult:
     """
@@ -62,6 +70,17 @@ def youtube_strip(v: HttpUrl, /) -> StripFuncResult:
         return Ok(HttpUrl("youtu.be", f"/{quer['v']}", [], v.fragment))
 
     return Ok(_no_query(v))
+
+
+@test
+def test_yt_url() -> None:
+    """
+    Tests youtube stripfunc
+    """
+    stripfunc = _takes_str(youtube_strip)
+    assert Ok.map(
+        stripfunc("https://youtube.com/watch?v=abcdefg1234&tracker=345345"), HttpUrl.into_str
+        ) == Ok("https://youtu.be/abcdefg1234")
 
 
 @register(domain=["www.amazon.com", "www.amazon.co.uk"])
