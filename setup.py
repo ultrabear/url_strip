@@ -35,5 +35,6 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Text Processing :: Filters",
         "Typing :: Typed",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
         ],
     )
