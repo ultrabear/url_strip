@@ -27,14 +27,10 @@ setup(
         },
     python_requires=">=3.8.0",
     classifiers=[
-        *support_pyvers(3, range(8, 11)),
-        "Programming Language :: Python :: 3 :: Only",
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
-        "Natural Language :: English",
-        "Operating System :: OS Independent",
-        "Topic :: Text Processing :: Filters",
-        "Typing :: Typed",
+        *support_pyvers(3, range(8, 11)), "Programming Language :: Python :: 3 :: Only",
+        "Development Status :: 3 - Alpha", "Intended Audience :: Developers",
+        "Natural Language :: English", "Operating System :: OS Independent",
+        "Topic :: Text Processing :: Filters", "Typing :: Typed",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
         ],
     )
