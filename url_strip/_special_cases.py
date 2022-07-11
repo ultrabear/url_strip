@@ -141,4 +141,6 @@ def test_no_query() -> None:
 
     assert func("https://google.com/search?v=among") == Ok("https://google.com/search")
 
-    assert Ok.is_instance(func("https://www.tiktok.com/@amqsinc/video/7118107323461094699?_t=8TshIG8gDyQ&_r=1"))
+    assert Ok.is_instance(
+        func("https://www.tiktok.com/@amqsinc/video/7118107323461094699?_t=8TshIG8gDyQ&_r=1")
+        )
