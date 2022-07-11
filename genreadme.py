@@ -98,9 +98,9 @@ def unify(cases: Iterator[str], output: StringWriter) -> None:
         if len(resolve) == 2:
             add_item(resolve[0], i)
 
-        # take first item if its not www, or take second item
+        # take first item if its not www or vm(tiktok), or take second item
         elif len(resolve) >= 3:
-            if resolve[0] == "www":
+            if resolve[0] in ["www", "vm"]:
                 add_item(resolve[1], i)
             else:
                 add_item(resolve[0], i)

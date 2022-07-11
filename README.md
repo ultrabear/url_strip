@@ -75,7 +75,6 @@ The pre registered domains are as follows:
 | amazon | `www.amazon.com`, `www.amazon.co.uk` | 
 | ebay | `ebay.com`, `www.ebay.com`, `www.ebay.co.uk` | 
 | reddit | `www.reddit.com` | 
-| tiktok | `www.tiktok.com` | 
+| tiktok | `www.tiktok.com`, `vm.tiktok.com` | 
 | twitter | `twitter.com` | 
-| vm | `vm.tiktok.com` | 
 | youtube | `youtube.com`, `www.youtube.com` | 
