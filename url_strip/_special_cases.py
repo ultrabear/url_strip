@@ -3,7 +3,7 @@ Special cases init handler and predefined domains
 """
 from typing import Dict, TypeVar, Callable, Iterator, List, Union
 
-from ._result import Ok, Err
+from ._result import Ok, Err, Result
 from ._types import StripFunc, StripFuncResult, HttpUrl, UrlError
 from .testing import test
 
@@ -47,9 +47,10 @@ def _no_query(v: HttpUrl, /) -> HttpUrl:
     return HttpUrl(v.domain, v.path, [], v.fragment)
 
 
-def _takes_str(c: Callable[[HttpUrl], StripFuncResult], /) -> Callable[[str], StripFuncResult]:
-    def takes_str(s: str, /) -> StripFuncResult:
-        return c(Ok.unwrap(HttpUrl.from_str(s)))
+def _takes_str(c: Callable[[HttpUrl], StripFuncResult],
+               /) -> Callable[[str], Result[str, UrlError]]:
+    def takes_str(s: str, /) -> Result[str, UrlError]:
+        return Ok.map(c(Ok.unwrap(HttpUrl.from_str(s))), HttpUrl.into_str)
 
     return takes_str
 
@@ -78,9 +79,8 @@ def test_yt_url() -> None:
     Tests youtube stripfunc
     """
     stripfunc = _takes_str(youtube_strip)
-    assert Ok.map(
-        stripfunc("https://youtube.com/watch?v=abcdefg1234&tracker=345345"), HttpUrl.into_str
-        ) == Ok("https://youtu.be/abcdefg1234")
+    assert stripfunc("https://youtube.com/watch?v=abcdefg1234&tracker=345345"
+                     ) == Ok("https://youtu.be/abcdefg1234")
 
 
 @register(domain=["www.amazon.com", "www.amazon.co.uk"])
@@ -102,19 +102,37 @@ def amazon_strip(v: HttpUrl, /) -> StripFuncResult:
     return Ok(_no_query(v))
 
 
-@register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk"])
-def ebay_strip(v: HttpUrl, /) -> StripFuncResult:
-    """
-    Strip function for ebay domains
-    """
+@test
+def test_amazon_url() -> None:
+    stripfunc = _takes_str(amazon_strip)
 
-    return Ok(_no_query(v))
+    # real amazon url btw
+    res = stripfunc(
+        "https://www.amazon.com/KONNWEI-Bluetooth-Wireless-Diagnostic-compatible/dp/B073F57QT3/"
+        "?content-id=amzn1.sym.bbb6bbd8-d236-47cb-b42f-734cb0cacc1f"
+        )
+
+    assert res == Ok("https://www.amazon.com/dp/B073F57QT3")
 
 
 @register(domain="twitter.com")
-def twitter_strip(v: HttpUrl, /) -> StripFuncResult:
+@register(domain="www.reddit.com")
+@register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk"])
+def no_queryable(v: HttpUrl, /) -> StripFuncResult:
     """
-    Strip function for twitter domains
+    Strips collection of domains that can be effectively stripped by 
+     removing the query string on them
     """
 
     return Ok(_no_query(v))
+
+
+@test
+def test_no_query() -> None:
+    """
+    Tests that no_queryable removes queries
+    """
+
+    func = _takes_str(no_queryable)
+
+    assert func("https://google.com/search?v=among") == Ok("https://google.com/search")
