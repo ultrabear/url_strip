@@ -125,6 +125,7 @@ PYTHONIC_CLAUSE = (
 
 
 def main() -> None:
+    import url_strip
 
     with open("README.md", "w") as fp:
 
@@ -135,7 +136,7 @@ def main() -> None:
             " To edit this file, make changes to {fname} instead\n-->\n"
             )
 
-        fp.write(f"# {TITLE}\n")
+        fp.write(f"# {TITLE} {url_strip.__version__}\n")
         fp.write(DESCRIPTION + "\n")
         fp.write(PYTHONIC_CLAUSE)
 
