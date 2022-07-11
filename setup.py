@@ -23,7 +23,8 @@ setup(
     packages=find_packages(),
     install_requires=get_requires(),
     extras_require={
-        "dev": ["mypy", "pylint", "yapf", "pyflakes", "pyright"],
+        # yapf requires toml to load pyproject.toml
+        "dev": ["mypy", "pylint", "yapf", "toml", "pyflakes", "pyright"],
         },
     python_requires=">=3.8.0",
     classifiers=[
