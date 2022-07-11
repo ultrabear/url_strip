@@ -41,5 +41,5 @@ class _VersionInfo(_typing.NamedTuple):
         return f"{self.major}.{self.minor}.{self.micro}{_table[self.releaselevel]}{serial}"
 
 
-version_info = _VersionInfo(0, 0, 1, "alpha", 0)
+version_info = _VersionInfo(0, 2, 0, "beta", 0)
 __version__ = version_info.as_pep440_str()

@@ -12,7 +12,7 @@ def support_pyvers(major: int, minor: range) -> List[str]:
 
 setup(
     name="url_strip",
-    version="0.1.0",
+    version="0.2.0b",
     description=
     "Library to strip http urls of tracking elements, and use shorthand variants of urls",
     long_description=open("README.md", "r").read(),
@@ -28,7 +28,7 @@ setup(
     python_requires=">=3.8.0",
     classifiers=[
         *support_pyvers(3, range(8, 11)), "Programming Language :: Python :: 3 :: Only",
-        "Development Status :: 3 - Alpha", "Intended Audience :: Developers",
+        "Development Status :: 4 - Beta", "Intended Audience :: Developers",
         "Natural Language :: English", "Operating System :: OS Independent",
         "Topic :: Text Processing :: Filters", "Typing :: Typed",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
