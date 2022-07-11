@@ -18,7 +18,10 @@ T = TypeVar("T")
 U = TypeVar("U")
 E = TypeVar("E")
 
-Result = Union[Tuple[Literal["ok"], T], Tuple[Literal["err"], E]]
+OkT = Tuple[Literal["ok"], T]
+ErrT = Tuple[Literal["err"], E]
+
+Result = Union[OkT[T], ErrT[E]]
 
 
 class UnwrapError(Exception):
@@ -28,6 +31,17 @@ class UnwrapError(Exception):
     __slots__ = ()
 
 
+# ClassOk and ClassErr both contain overloaded methods for get and map,
+#  these methods are currently commented out due to breaking mypy
+# issue: https://github.com/python/mypy/issues/7781
+#
+# when issue is marked patched, the overloads should be uncommented
+#
+# this pylint pragma is set to ignore the string comments,
+#  it should also be removed once patched
+# pylint: disable=pointless-string-statement
+
+
 class ClassOk:
     """
     Constructor and inspector class for getting the Ok variant of a Result type
@@ -35,18 +49,36 @@ class ClassOk:
     __slots__ = ()
 
     @staticmethod
-    def __call__(value: T, /) -> Tuple[Literal["ok"], T]:
+    def __call__(value: T, /) -> OkT[T]:
         """
         Wraps a value in an Ok type
         """
         return ("ok", value)
 
     @staticmethod
-    def is_instance(result: Result[T, E], /) -> TypeGuard[Tuple[Literal["ok"], T]]:
+    def is_instance(result: Result[T, E], /) -> TypeGuard[OkT[T]]:
         """
         Returns True if Result is an Ok variant
         """
         return result[0] == "ok"
+
+    # See comment above, uncomment when patched
+    """
+    @overload
+    @staticmethod
+    def get(result: OkT[T], /) -> T:
+        ...
+
+    @overload
+    @staticmethod
+    def get(result: ErrT[E], /) -> None:
+        ...
+
+    @overload
+    @staticmethod
+    def get(result: Result[T, E], /) -> Optional[T]:
+        ...
+    """
 
     @staticmethod
     def get(result: Result[T, E], /) -> Optional[T]:
@@ -78,6 +110,24 @@ class ClassOk:
 
         return result[1]
 
+    # See comment above, uncomment when patched
+    """
+    @overload
+    @staticmethod
+    def map(result: OkT[T], call: Callable[[T], U]) -> OkT[U]:
+        ...
+
+    @overload
+    @staticmethod
+    def map(result: ErrT[E], call: Callable[[T], U]) -> ErrT[E]:
+        ...
+
+    @overload
+    @staticmethod
+    def map(result: Result[T, E], call: Callable[[T], U]) -> Result[U, E]:
+        ...
+    """
+
     @staticmethod
     def map(result: Result[T, E], call: Callable[[T], U]) -> Result[U, E]:
         """
@@ -98,18 +148,36 @@ class ClassErr:
     __slots__ = ()
 
     @staticmethod
-    def __call__(value: E, /) -> Tuple[Literal["err"], E]:
+    def __call__(value: E, /) -> ErrT[E]:
         """
         Wraps a value in an Err type
         """
         return ("err", value)
 
     @staticmethod
-    def is_instance(result: Result[T, E], /) -> TypeGuard[Tuple[Literal["err"], E]]:
+    def is_instance(result: Result[T, E], /) -> TypeGuard[ErrT[E]]:
         """
         Returns True if Result is an Err variant
         """
         return result[0] == "err"
+
+    # See comment above, uncomment when patched
+    """
+    @staticmethod
+    @overload
+    def get(result: ErrT[E], /) -> E:
+        ...
+
+    @staticmethod
+    @overload
+    def get(result: OkT[T], /) -> None:
+        ...
+
+    @staticmethod
+    @overload
+    def get(result: Result[T, E], /) -> Optional[E]:
+        ...
+    """
 
     @staticmethod
     def get(result: Result[T, E], /) -> Optional[E]:
@@ -140,6 +208,24 @@ class ClassErr:
                 )
 
         return result[1]
+
+    # See comment above, uncomment when patched
+    """
+    @overload
+    @staticmethod
+    def map(result: ErrT[E], call: Callable[[E], U]) -> ErrT[U]:
+        ...
+
+    @overload
+    @staticmethod
+    def map(result: OkT[T], call: Callable[[E], U]) -> OkT[T]:
+        ...
+
+    @overload
+    @staticmethod
+    def map(result: Result[T, E], call: Callable[[E], U]) -> Result[T, U]:
+        ...
+    """
 
     @staticmethod
     def map(result: Result[T, E], call: Callable[[E], U]) -> Result[T, U]:
