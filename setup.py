@@ -22,7 +22,7 @@ setup(
     author_email="bearodark@gmail.com",
     packages=find_packages(),
     install_requires=get_requires(),
-    exras_require={
+    extras_require={
         "dev": ["mypy", "pylint", "yapf", "pyflakes", "pyright"],
         },
     python_requires=">=3.8.0",
