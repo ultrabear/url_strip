@@ -81,7 +81,7 @@ class ClassOk:
     @staticmethod
     def map(result: Result[T, E], call: Callable[[T], U]) -> Result[U, E]:
         """
-        Maps Ok value of result with function, or returns Err variant
+        Maps Ok value of result with function, or returns Err variant unchanged
         """
         if Ok.is_instance(result):
             return Ok(call(result[1]))
@@ -140,6 +140,18 @@ class ClassErr:
                 )
 
         return result[1]
+
+    @staticmethod
+    def map(result: Result[T, E], call: Callable[[E], U]) -> Result[T, U]:
+        """
+        Maps Err value of result with function, or returns Ok variant unchanged
+        """
+        if Err.is_instance(result):
+            return Err(call(result[1]))
+        if Ok.is_instance(result):
+            return result
+
+        raise RuntimeError("Unreachable!")
 
 
 Ok: ClassOk = ClassOk()
