@@ -121,6 +121,7 @@ def test_amazon_url() -> None:
 @register(domain="twitter.com")
 @register(domain="www.reddit.com")
 @register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk"])
+@register(domain=["www.tiktok.com", "vm.tiktok.com"])
 def no_queryable(v: HttpUrl, /) -> StripFuncResult:
     """
     Strips collection of domains that can be effectively stripped by
@@ -139,3 +140,5 @@ def test_no_query() -> None:
     func = _takes_str(no_queryable)
 
     assert func("https://google.com/search?v=among") == Ok("https://google.com/search")
+
+    assert Ok.is_instance(func("https://www.tiktok.com/@amqsinc/video/7118107323461094699?_t=8TshIG8gDyQ&_r=1"))

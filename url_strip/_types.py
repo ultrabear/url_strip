@@ -12,7 +12,8 @@ from ._result import Result, Ok, Err
 
 # chars unreserved (allowed) in a url and the expansion char
 # based on https://www.ietf.org/rfc/rfc3986.txt
-URL_CHARS: Final = r"([a-zA-z0-9\-\.\_\-]|%[0-9a-fA-F]{2})"
+# added @ to allow capturing tiktok urls
+URL_CHARS: Final = r"([a-zA-z0-9\-\.\_\-@]|%[0-9a-fA-F]{2})"
 
 DOMAIN_CAPTURE: Final = f"(?P<domain>{URL_CHARS}+)"
 
