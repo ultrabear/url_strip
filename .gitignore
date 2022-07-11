@@ -1,3 +1,7 @@
 # Ignore cached python files
 __pycache__
 
+# ignore egg info
+*.egg-info
+# ignore build data
+build/
