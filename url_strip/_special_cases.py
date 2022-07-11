@@ -104,6 +104,9 @@ def amazon_strip(v: HttpUrl, /) -> StripFuncResult:
 
 @test
 def test_amazon_url() -> None:
+    """
+    Tests amazon urls
+    """
     stripfunc = _takes_str(amazon_strip)
 
     # real amazon url btw
@@ -120,7 +123,7 @@ def test_amazon_url() -> None:
 @register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk"])
 def no_queryable(v: HttpUrl, /) -> StripFuncResult:
     """
-    Strips collection of domains that can be effectively stripped by 
+    Strips collection of domains that can be effectively stripped by
      removing the query string on them
     """
 
