@@ -3,8 +3,7 @@ from setuptools import setup, find_packages
 
 
 def get_requires() -> List[str]:
-    with open("requirements.txt", "r") as fp:
-        return [i.strip("\n") for i in fp.readlines()]
+    return ["typing_extensions >= 3.10.0.0, < 5"]
 
 
 def support_pyvers(major: int, minor: range) -> List[str]:
