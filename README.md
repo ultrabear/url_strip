@@ -74,5 +74,6 @@ The pre registered domains are as follows:
 | --- | --- |
 | amazon | `www.amazon.com`, `www.amazon.co.uk` | 
 | ebay | `ebay.com`, `www.ebay.com`, `www.ebay.co.uk` | 
+| reddit | `www.reddit.com` | 
 | twitter | `twitter.com` | 
 | youtube | `youtube.com`, `www.youtube.com` | 
