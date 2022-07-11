@@ -1,15 +1,21 @@
 """
 Testing library for url_strip that allows easily writing and running tests
 """
-from typing import Callable, List, TypeVar
-import traceback
+import typing as _typing
+import traceback as _traceback
 
-_test_list: List[Callable[[], None]] = []
+if _typing.TYPE_CHECKING:
+    Func = _typing.TypeVar("Func", bound=_typing.Callable[[], None])
 
-Func = TypeVar("Func", bound=Callable[[], None])
+__all__ = [
+    "test",
+    "run_tests",
+    ]
+
+_test_list: _typing.List[_typing.Callable[[], None]] = []
 
 
-def test(c: Func, /) -> Func:
+def test(c: "Func", /) -> "Func":
     """
     Decorator to add a function to the testing library
     """
@@ -33,7 +39,7 @@ def run_tests() -> int:
             i()
         except Exception as err:  # pylint: disable=broad-except
             # allow catching broad exceptions here to allow running all tests
-            traceback.print_exception(type(err), err, err.__traceback__)
+            _traceback.print_exception(type(err), err, err.__traceback__)
             failure += 1
 
     return failure
