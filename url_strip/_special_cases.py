@@ -1,7 +1,7 @@
 """
 Special cases init handler and predefined domains
 """
-from typing import Dict, TypeVar, Callable, Iterator, List, Union
+from typing import Dict, TypeVar, Callable, Iterator, List, Union, Optional
 
 from ._result import Ok, Err, Result
 from ._types import StripFunc, StripFuncResult, HttpUrl, UrlError
@@ -118,9 +118,54 @@ def test_amazon_url() -> None:
     assert res == Ok("https://www.amazon.com/dp/B073F57QT3")
 
 
+_number_set = set("0123456789")
+
+
+@register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk", "www.ebay.it", "www.ebay.de"])
+def ebay_strip(v: HttpUrl, /) -> StripFuncResult:
+    """
+    Strip function for ebay domains
+    """
+
+    splitpath = v.path.split("/")
+
+    # try and shorten item urls
+    if (item_idx := splitpath.index("itm")) != -1:
+
+        number_id: Optional[str] = None
+
+        for i in splitpath[item_idx:]:
+            if all(c in _number_set for c in i):
+                number_id = i
+                break
+
+        if number_id is not None:
+            return Ok(HttpUrl(v.domain, f"/itm/{number_id}", [], v.fragment))
+
+        return Err(UrlError("Found item identifier, but could not find item id"))
+
+    return Ok(_no_query(v))
+
+
+@test
+def test_ebay_strip() -> None:
+    """
+    Tests ebay strip function
+    """
+
+    stripfunc = _takes_str(ebay_strip)
+
+    # also a real ebay link
+    res = stripfunc(
+        "https://www.ebay.com/itm/"
+        "NEW-128GB-BINGOGO-2-5-inch-PATA-IDE-44-PIN-SSD-Solid-State-Disk-For-IDE-Laptop/"
+        "183895573483?pageci=b3edb351-3eba-4a55-978d-d25ac878cf5f&redirect=mobile"
+        )
+    assert res == Ok("https://www.ebay.com/itm/183895573483")
+
+
 @register(domain="twitter.com")
 @register(domain="www.reddit.com")
-@register(domain=["ebay.com", "www.ebay.com", "www.ebay.co.uk"])
 @register(domain=["www.tiktok.com", "vm.tiktok.com"])
 def no_queryable(v: HttpUrl, /) -> StripFuncResult:
     """
