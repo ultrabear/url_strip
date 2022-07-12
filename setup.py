@@ -12,7 +12,7 @@ def support_pyvers(major: int, minor: range) -> List[str]:
 
 setup(
     name="url_strip",
-    version="0.2.1b",
+    version="0.2.1",
     description=
     "Library to strip http urls of tracking elements, and use shorthand variants of urls",
     long_description=open("README.md", "r").read(),
