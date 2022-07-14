@@ -18,7 +18,7 @@ def main(args: List[str]) -> int:
 
     parser = argparse.ArgumentParser(args[0])
 
-    group = parser.add_mutually_exclusive_group()
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--strip", "-s", help="Strips the given url")
     group.add_argument(
         "--version", "-v", action="store_true", help="Prints the version info and exits"
